@@ -55,9 +55,8 @@ public class MyColorPickerView extends View {
             }
         });
 
-        generateColorsAndPositions();
-
-        initPaint();
+        generateColors();
+        initPaints();
     }
 
     private int mWidth;
@@ -73,31 +72,32 @@ public class MyColorPickerView extends View {
     }
 
     private int[] mColors;
-    private float[] mPositions;
-    private final int HSV_RANGE = 361;
-
-    private void generateColorsAndPositions() {
-
+    private void generateColors() {
+        int HSV_RANGE = 361;
         mColors = new int[HSV_RANGE];
-        mPositions = new float[HSV_RANGE];
 
         for(int i = 0; i < HSV_RANGE; i++) {
             mColors[i] = Color.HSVToColor(new float[] {i, 1f, 1f});
-            mPositions[i] = mWidth * i / HSV_RANGE;
         }
     }
 
-    private void initPaint(){
-        mPaint = new Paint();
-        Shader mHueShader = new LinearGradient(0, mHeight / 2, mWidth, mHeight / 2, mColors, mPositions, Shader.TileMode.CLAMP);
-        mPaint.setStrokeWidth(2);
-        mPaint.setShader(mHueShader);
+    private Paint mainPaint;
+    private Paint mTrackerPaint;
+    private Shader mHueShader;
+
+    private void initPaints(){
+        mainPaint = new Paint();
+        mTrackerPaint = new Paint();
+        mTrackerPaint.setColor(Color.BLACK);
     }
 
-    private Paint mPaint;
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRect(0, 0, mWidth, mHeight, mPaint);
+        mHueShader = new LinearGradient(0, 0, mWidth, mHeight, mColors, null, Shader.TileMode.CLAMP);
+        mainPaint.setShader(mHueShader);
+        canvas.drawRect(0, 0, mWidth, mHeight, mainPaint);
+
+        //TODO: draw tracker, please
     }
 }
