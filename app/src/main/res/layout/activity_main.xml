@@ -7,8 +7,7 @@
 
     <eugeny.n7.controlcreating.MyColorPickerView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="#cc0adf"/>
+        android:layout_height="wrap_content"/>
 
     <!--<eugeny.n7.controlcreating.ColorPickerView-->
         <!--android:layout_width="300dp"-->
