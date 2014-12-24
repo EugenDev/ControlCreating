@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -34,8 +33,12 @@ public class MyColorPickerView extends View {
         init();
     }
 
-    private boolean trackerTouched;
-    private float startOffset;
+    private int mCurrentColor;
+
+    private int GetCurrentColor(float x){
+        float g = x * 360f / gradientRect.width();
+        return Color.HSVToColor(new float [] {g, 1f, 1f});
+    }
 
     private void init() {
 
@@ -44,20 +47,17 @@ public class MyColorPickerView extends View {
                 int action = MotionEventCompat.getActionMasked(event);
 
                 switch (action) {
-                    case (MotionEvent.ACTION_DOWN):
-                        trackerRect.offsetTo(event.getX(), trackerRect.top);
-                        invalidate();
-                        break;
 
                     case (MotionEvent.ACTION_MOVE):
+                    case (MotionEvent.ACTION_DOWN):
                         trackerRect.offsetTo(event.getX(), trackerRect.top);
-                        invalidate();
+                        int newColor = GetCurrentColor(event.getX());
+                        if(newColor != mCurrentColor) {
+                            invalidate();
+                            mCurrentColor = newColor;
+                            OnColorChanged(mCurrentColor);
+                        }
                         break;
-
-                    case (MotionEvent.ACTION_UP):
-                        trackerTouched = false;
-                        break;
-
                 }
                 return true;
             }
@@ -79,9 +79,13 @@ public class MyColorPickerView extends View {
         mWidth = MeasureSpec.getSize(widthMeasureSpec);
         mHeight = mWidth / 10;
 
-        gradientRect = new Rect(0, 0, mWidth, mHeight);
+        if(gradientRect == null) {
+            gradientRect = new Rect(0, 0, mWidth, mHeight);
+        }
 
-        trackerRect= new RectF(0, 0, 20, mHeight);
+        if(trackerRect == null) {
+            trackerRect = new RectF(0, 0, 20, mHeight);
+        }
 
         setMeasuredDimension(mWidth, mHeight);
     }
@@ -118,8 +122,24 @@ public class MyColorPickerView extends View {
             gradientShader = new LinearGradient(0, 0, mWidth, mHeight, mColors, null, Shader.TileMode.CLAMP);
             mGradientPaint.setShader(gradientShader);
         }
-        canvas.drawRect(0, 0, mWidth, mHeight, mGradientPaint);
 
+        canvas.drawRect(gradientRect, mGradientPaint);
         canvas.drawRoundRect(trackerRect, 2, 2, mTrackerPaint);
+    }
+
+    private OnColorChangedListener mListener;
+
+    private void OnColorChanged(int color){
+        if(mListener != null){
+            mListener.onColorChanged(color);
+        }
+    }
+
+    public void setOnColorChangedListener(OnColorChangedListener listener){
+        mListener = listener;
+    }
+
+    public interface OnColorChangedListener {
+        public void onColorChanged(int color);
     }
 }
