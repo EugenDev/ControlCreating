@@ -279,17 +279,17 @@ public class ColorPickerView extends View {
 			mHuePaint.setShader(mHueShader);
 		}
 
-		canvas.drawRect(rect, mHuePaint);
+        canvas.drawRect(rect, mHuePaint);
 
-		float rectHeight = 4 * mDensity / 2;
+        float rectHeight = 4 * mDensity / 2;
 
-		Point p = hueToPoint(mHue);
+        Point p = hueToPoint(mHue);
 
-		RectF r = new RectF();
-		r.left = rect.left - RECTANGLE_TRACKER_OFFSET;
-		r.right = rect.right + RECTANGLE_TRACKER_OFFSET;
-		r.top = p.y - rectHeight;
-		r.bottom = p.y + rectHeight;
+        RectF r = new RectF();
+        r.left = rect.left - RECTANGLE_TRACKER_OFFSET;
+        r.right = rect.right + RECTANGLE_TRACKER_OFFSET;
+        r.top = p.y - rectHeight;
+        r.bottom = p.y + rectHeight;
 
 
 		canvas.drawRoundRect(r, 2, 2, mHueTrackerPaint);
